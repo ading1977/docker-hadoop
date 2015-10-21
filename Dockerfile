@@ -25,11 +25,14 @@ RUN ln -s /opt/hadoop-${HADOOP_VERSION} ${HADOOP_PREFIX} \
     && mkdir /var/lib/hadoop && mkdir /var/lib/hadoop/namenode \
     && mkdir /var/lib/hadoop/datanode
 
-# Copy Hadoop config files
 COPY add/config/* ${HADOOP_PREFIX}/etc/hadoop/
 
 # Format hdfs
 RUN ${HADOOP_PREFIX}/bin/hdfs namenode -format
+
+# Copy all config files to /hadoop-config
+RUN mkdir -p /hadoop-config \
+    && cp -ar ${HADOOP_PREFIX}/etc/hadoop/* /hadoop-config
 
 # Folder to share files
 RUN mkdir /root/shared && \
