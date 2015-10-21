@@ -18,4 +18,28 @@
     <name>yarn.nodemanager.aux-services</name>
     <value>mapreduce_shuffle</value>
   </property>
+  <property>
+    <name>yarn.log-aggregation-enable</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>yarn.web-proxy.address</name>
+    <value>@HOSTNAME@:8089</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>@HOSTNAME@</value>
+  </property>
+  <property>
+    <name>yarn.timeline-service.hostname</name>
+    <value>@HOSTNAME@</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.recovery.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.delete.debug-delay-sec</name>
+    <value>36000</value>
+  </property>
 </configuration>

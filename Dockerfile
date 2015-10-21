@@ -26,7 +26,7 @@ RUN ln -s /opt/hadoop-${HADOOP_VERSION} ${HADOOP_PREFIX} \
     && mkdir /var/lib/hadoop/datanode
 
 # Copy Hadoop config files
-COPY config/hadoop/* ${HADOOP_PREFIX}/etc/hadoop/
+COPY add/config/* ${HADOOP_PREFIX}/etc/hadoop/
 
 # Format hdfs
 RUN ${HADOOP_PREFIX}/bin/hdfs namenode -format
@@ -35,7 +35,7 @@ RUN ${HADOOP_PREFIX}/bin/hdfs namenode -format
 RUN mkdir /root/shared && \
     chmod a+rwX /root/shared
 
-COPY docker-entrypoint.sh /
+COPY bootstrap.sh /
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/bootstrap.sh"]
 
