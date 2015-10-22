@@ -30,14 +30,6 @@ COPY add/config/* ${HADOOP_PREFIX}/etc/hadoop/
 # Format hdfs
 RUN ${HADOOP_PREFIX}/bin/hdfs namenode -format
 
-# Copy all config files to /hadoop-config
-RUN mkdir -p /hadoop-config \
-    && cp -ar ${HADOOP_PREFIX}/etc/hadoop/* /hadoop-config
-
-# Folder to share files
-RUN mkdir /root/shared && \
-    chmod a+rwX /root/shared
-
 COPY bootstrap.sh /
 
 ENTRYPOINT ["/bootstrap.sh"]
