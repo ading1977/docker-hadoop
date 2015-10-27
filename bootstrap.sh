@@ -1,26 +1,37 @@
 #!/bin/bash
 
-: ${HADOOP_CONF_DIR:=/opt/hadoop/etc/hadoop}
-
-init_config() {
-  # Modify configuration files
-  local CORE_SITE=${HADOOP_CONF_DIR}/core-site.xml
-  local OLD_CORE_SITE=${HADOOP_CONF_DIR}/core-site.xml.old
-  local HDFS_SITE=${HADOOP_CONF_DIR}/hdfs-site.xml
-  local OLD_HDFS_SITE=${HADOOP_CONF_DIR}/hdfs-site.xml.old
-  local YARN_SITE=${HADOOP_CONF_DIR}/yarn-site.xml
-  local OLD_YARN_SITE=${HADOOP_CONF_DIR}/yarn-site.xml.old
-
-  mv ${CORE_SITE} ${OLD_CORE_SITE}
-  sed s/@HOSTNAME@/${CONF_NAMENODE}/ ${OLD_CORE_SITE} > ${CORE_SITE}
-  mv ${HDFS_SITE} ${OLD_HDFS_SITE}
-  sed s/@REPLICATION@/${CONF_DFS_REPLICATION}/ ${OLD_HDFS_SITE} > ${HDFS_SITE}
-  mv ${YARN_SITE} ${OLD_YARN_SITE}
-  sed s/@HOSTNAME@/${CONF_RESOURCEMANAGER}/ ${OLD_YARN_SITE} > ${YARN_SITE}
-}
-
 log() {
   echo $(date) $@
+}
+
+init_data() {
+  if find ${HADOOP_DATA_DIR} -maxdepth 0 -empty | read; then
+    log "Initializing hadoop data"
+    tar xf /tmp/hadoop-data.tar -C ${HADOOP_DATA_DIR}
+  fi
+  rm -f /tmp/hadoop-data.tar
+}
+
+init_config() {
+  if find ${HADOOP_CONF_DIR} -maxdepth 0 -empty | read; then
+    log "Initializing hadoop config"
+    tar xf /tmp/hadoop-config.tar -C ${HADOOP_CONF_DIR}
+    # Modify configuration files
+    local CORE_SITE=${HADOOP_CONF_DIR}/core-site.xml
+    local OLD_CORE_SITE=${HADOOP_CONF_DIR}/core-site.xml.old
+    local HDFS_SITE=${HADOOP_CONF_DIR}/hdfs-site.xml
+    local OLD_HDFS_SITE=${HADOOP_CONF_DIR}/hdfs-site.xml.old
+    local YARN_SITE=${HADOOP_CONF_DIR}/yarn-site.xml
+    local OLD_YARN_SITE=${HADOOP_CONF_DIR}/yarn-site.xml.old
+
+    mv ${CORE_SITE} ${OLD_CORE_SITE}
+    sed s/@HOSTNAME@/${CONF_NAMENODE}/ ${OLD_CORE_SITE} > ${CORE_SITE}
+    mv ${HDFS_SITE} ${OLD_HDFS_SITE}
+    sed s/@REPLICATION@/${CONF_DFS_REPLICATION}/ ${OLD_HDFS_SITE} > ${HDFS_SITE}
+    mv ${YARN_SITE} ${OLD_YARN_SITE}
+    sed s/@HOSTNAME@/${CONF_RESOURCEMANAGER}/ ${OLD_YARN_SITE} > ${YARN_SITE}
+  fi
+  rm -f /tmp/hadoop-config.tar
 }
 
 die() {
@@ -33,6 +44,9 @@ die() {
 
 do_action() {
   action=$1
+  # Clean pid files in case hadoop daemon is not gracefully shut down
+  rm -rf /tmp/hadoop*.pid
+  # Start daemon
   case $DAEMON in
     namenode)
       JPS_CLASS=NameNode
@@ -58,24 +72,31 @@ do_action() {
   return $?
 }
 
+init() {
+  # Initialize hdfs data if needed
+  init_data
+  # Initialize configuration files if needed
+  init_config
+}
+
+
+# Initialization
+init
+
 DAEMON=$1
 
-# Clean pid files in case hadoop daemon is not gracefully shut down
-rm -rf /tmp/hadoop*.pid
+# Run shell if no daemon is being passed in
+if [ -z $DAEMON ]; then
+  exec /bin/bash
+fi
 
 # Trap signal
 trap die SIGHUP SIGINT SIGTERM
-
-# Initialize configuration files if needed
-init_config
-
 log "Starting $DAEMON ..."
-
 # Start daemon
 if ! do_action "start"; then
   exit 1
 fi
-
 log "Started $DAEMON"
 
 # Minitor daemon liveliness
