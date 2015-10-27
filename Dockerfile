@@ -28,14 +28,28 @@ RUN ln -s /opt/hadoop-${HADOOP_VERSION} ${HADOOP_PREFIX} \
     && mkdir /var/lib/hadoop/datanode
 
 # Format hdfs
-COPY add/config/* ${HADOOP_PREFIX}/etc/hadoop/
+COPY add/config/hadoop/* ${HADOOP_CONF_DIR}/
 RUN ${HADOOP_PREFIX}/bin/hdfs namenode -format
 
 # Copy data and configuration to be used by container initialization
 RUN tar cf /tmp/hadoop-data.tar -C ${HADOOP_DATA_DIR} . \
     && tar cf /tmp/hadoop-config.tar -C ${HADOOP_CONF_DIR} .
 
-COPY bootstrap.sh /
+ENV ZOOKEEPER_PREFIX /opt/zookeeper
+ENV ZOOKEEPER_CONF_DIR $ZOOKEEPER_PREFIX/conf
+ENV ZOOKEEPER_VERSION 3.4.6
+ENV PATH ${ZOOKEEPER_PREFIX}/bin:$PATH
 
+# Download zookeeper
+RUN curl -SL http://apache.mirror.rafal.ca/zookeeper/stable/zookeeper-${ZOOKEEPER_VERSION}.tar.gz \
+    | tar xz -C /opt
+
+# Install zookeeper
+RUN ln -s /opt/zookeeper-${ZOOKEEPER_VERSION} ${ZOOKEEPER_PREFIX} \
+    && mkdir /var/lib/zookeeper
+COPY add/config/zookeeper/* ${ZOOKEEPER_CONF_DIR}/
+
+# Run
+COPY bootstrap.sh /
 ENTRYPOINT ["/bootstrap.sh"]
 

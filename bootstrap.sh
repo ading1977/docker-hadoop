@@ -64,6 +64,10 @@ do_action() {
       JPS_CLASS=NodeManager
       ${HADOOP_PREFIX}/bin/yarn --daemon $1 nodemanager
     ;;
+    zookeeper)
+      JPS_CLASS=QuorumPeerMain
+      ${ZOOKEEPER_PREFIX}/bin/zkServer.sh start
+    ;;
     *)
       log "Unrecognized daemon $DAEMON"
       return 1
@@ -104,7 +108,7 @@ while true; do
   if jps | grep $JPS_CLASS > /dev/null; then
     sleep 15
   else
-    log "$JPS_CLASS has exited unexpectedly"
+    log "$DAEMON has exited unexpectedly"
     exit 1
   fi
 done
