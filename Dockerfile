@@ -50,13 +50,15 @@ RUN ln -s /opt/zookeeper-${ZOOKEEPER_VERSION} ${ZOOKEEPER_PREFIX} \
 COPY add/config/zookeeper/* ${ZOOKEEPER_CONF_DIR}/
 
 ENV SLIDER_PREFIX /opt/slider
-ENV SLIDER_VERSION 0.90.0-incubating-SNAPSHOT-all
+ENV SLIDER_VERSION 0.90.0-incubating-SNAPSHOT
 ENV PATH ${SLIDER_PREFIX}/bin:$PATH
 # Download slider
-RUN curl -SL https://s3.amazonaws.com/hadoop-distribution/slider-${SLIDER_VERSION}.tar.gz \
+RUN curl -SL https://s3.amazonaws.com/hadoop-distribution/slider-${SLIDER_VERSION}-all.tar.gz \
     | tar xz -C /opt
 # Install slider
 RUN ln -s /opt/slider-${SLIDER_VERSION} ${SLIDER_PREFIX}
+# Copy the sample application packages
+COPY add/config/slider/app_packages ${SLIDER_PREFIX}/
 
 # Set JAVA_HOME
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
