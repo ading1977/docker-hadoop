@@ -60,6 +60,10 @@ do_action() {
       JPS_CLASS=ResourceManager
       ${HADOOP_PREFIX}/bin/yarn --daemon $1 resourcemanager
     ;;
+    proxyserver)
+      JPS_CLASS=WebAppProxyServer
+      ${HADOOP_PREFIX}/bin/yarn --daemon $1 proxyserver
+    ;;
     nodemanager)
       JPS_CLASS=NodeManager
       ${HADOOP_PREFIX}/bin/yarn --daemon $1 nodemanager
