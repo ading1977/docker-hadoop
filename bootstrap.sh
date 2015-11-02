@@ -12,7 +12,7 @@ init_data() {
   rm -f /tmp/hadoop-data.tar
 }
 
-init_config() {
+init_hadoop_config() {
   if find ${HADOOP_CONF_DIR} -maxdepth 0 -empty | read; then
     log "Initializing hadoop config"
     tar xf /tmp/hadoop-config.tar -C ${HADOOP_CONF_DIR}
@@ -25,11 +25,14 @@ init_config() {
     local OLD_YARN_SITE=${HADOOP_CONF_DIR}/yarn-site.xml.old
 
     mv ${CORE_SITE} ${OLD_CORE_SITE}
-    sed s/@HOSTNAME@/${CONF_NAMENODE}/ ${OLD_CORE_SITE} > ${CORE_SITE}
+    sed s/@NAMENODE@/${CONF_NAMENODE}/g ${OLD_CORE_SITE} \
+      | sed s/@ZKQUORUM@/${CONF_ZK_QUORUM}/g - > ${CORE_SITE}
     mv ${HDFS_SITE} ${OLD_HDFS_SITE}
-    sed s/@REPLICATION@/${CONF_DFS_REPLICATION}/ ${OLD_HDFS_SITE} > ${HDFS_SITE}
+    sed s/@REPLICATION@/${CONF_DFS_REPLICATION}/g ${OLD_HDFS_SITE} > ${HDFS_SITE}
     mv ${YARN_SITE} ${OLD_YARN_SITE}
-    sed s/@HOSTNAME@/${CONF_RESOURCEMANAGER}/ ${OLD_YARN_SITE} > ${YARN_SITE}
+    sed s/@RESOURCEMANAGER@/${CONF_RESOURCEMANAGER}/g ${OLD_YARN_SITE} \
+      | sed s/@PROXYSERVER@/${CONF_PROXYSERVER}/g - \
+      | sed s/@TIMELINESERVER@/${CONF_TIMELINESERVER}/g - > ${YARN_SITE}
   fi
   rm -f /tmp/hadoop-config.tar
 }
@@ -70,7 +73,7 @@ do_action() {
     ;;
     zookeeper)
       JPS_CLASS=QuorumPeerMain
-      ${ZOOKEEPER_PREFIX}/bin/zkServer.sh start
+      ${ZK_PREFIX}/bin/zkServer.sh start
     ;;
     *)
       log "Unrecognized daemon $DAEMON"
@@ -84,7 +87,7 @@ init() {
   # Initialize hdfs data if needed
   init_data
   # Initialize configuration files if needed
-  init_config
+  init_hadoop_config
 }
 
 

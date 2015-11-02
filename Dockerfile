@@ -35,30 +35,32 @@ RUN ${HADOOP_PREFIX}/bin/hdfs namenode -format
 RUN tar cf /tmp/hadoop-data.tar -C ${HADOOP_DATA_DIR} . \
     && tar cf /tmp/hadoop-config.tar -C ${HADOOP_CONF_DIR} .
 
-ENV ZOOKEEPER_PREFIX /opt/zookeeper
-ENV ZOOKEEPER_CONF_DIR $ZOOKEEPER_PREFIX/conf
-ENV ZOOKEEPER_VERSION 3.4.6
-ENV PATH ${ZOOKEEPER_PREFIX}/bin:$PATH
+ENV ZK_PREFIX /opt/zookeeper
+ENV ZK_CONF_DIR $ZK_PREFIX/conf
+ENV ZK_VERSION 3.4.6
+ENV PATH ${ZK_PREFIX}/bin:$PATH
 
 # Download zookeeper
-RUN curl -SL http://apache.mirror.rafal.ca/zookeeper/stable/zookeeper-${ZOOKEEPER_VERSION}.tar.gz \
+RUN curl -SL http://apache.mirror.rafal.ca/zookeeper/stable/zookeeper-${ZK_VERSION}.tar.gz \
     | tar xz -C /opt
 
 # Install zookeeper
-RUN ln -s /opt/zookeeper-${ZOOKEEPER_VERSION} ${ZOOKEEPER_PREFIX} \
+RUN ln -s /opt/zookeeper-${ZK_VERSION} ${ZK_PREFIX} \
     && mkdir /var/lib/zookeeper
-COPY add/config/zookeeper/* ${ZOOKEEPER_CONF_DIR}/
+COPY add/config/zookeeper/* ${ZK_CONF_DIR}/
 
 ENV SLIDER_PREFIX /opt/slider
+ENV SLIDER_CONF_DIR $SLIDER_PREFIX/conf
 ENV SLIDER_VERSION 0.90.0-incubating-SNAPSHOT
 ENV PATH ${SLIDER_PREFIX}/bin:$PATH
 # Download slider
 RUN curl -SL https://s3.amazonaws.com/hadoop-distribution/slider-${SLIDER_VERSION}-all.tar.gz \
     | tar xz -C /opt
 # Install slider
-RUN ln -s /opt/slider-${SLIDER_VERSION} ${SLIDER_PREFIX}
+RUN ln -s /opt/slider-${SLIDER_VERSION} ${SLIDER_PREFIX} \
+    && mkdir -p ${SLIDER_PREFIX}/app_packages
 # Copy the sample application packages
-COPY add/config/slider/app_packages ${SLIDER_PREFIX}/
+COPY add/config/slider/app_packages ${SLIDER_PREFIX}/app_packages/
 
 # Set JAVA_HOME
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64

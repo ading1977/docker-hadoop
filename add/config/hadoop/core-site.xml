@@ -20,7 +20,21 @@
     <value>/var/lib/hadoop</value>
   </property>
   <property>
+   <name>hadoop.registry.zk.quorum</name>
+   <value>@ZKQUORUM@</value>
+   <description>List of hostname:port pairs defining the zookeeper quorum binding for the registry
+   </description>
+  </property>
+  <property>
+   <name>hadoop.registry.rm.enabled</name>
+   <value>true</value>
+   <description> Is the registry enabled: does the RM start it up, create the user
+      and system paths, and purge service records when containers, application attempts
+      and applications complete?
+   </description>
+  </property>
+  <property>
     <name>fs.defaultFS</name>
-    <value>hdfs://@HOSTNAME@:9000</value>
+    <value>hdfs://@NAMENODE@:9000</value>
   </property>
 </configuration>

@@ -24,15 +24,15 @@
   </property>
   <property>
     <name>yarn.web-proxy.address</name>
-    <value>@HOSTNAME@:8089</value>
+    <value>@PROXYSERVER@:8089</value>
   </property>
   <property>
     <name>yarn.resourcemanager.hostname</name>
-    <value>@HOSTNAME@</value>
+    <value>@RESOURCEMANAGER@</value>
   </property>
   <property>
     <name>yarn.timeline-service.hostname</name>
-    <value>@HOSTNAME@</value>
+    <value>@TIMELINESERVER@</value>
   </property>
   <property>
     <name>yarn.resourcemanager.recovery.enabled</name>
