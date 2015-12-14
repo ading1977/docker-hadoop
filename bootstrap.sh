@@ -53,27 +53,27 @@ do_action() {
   case $DAEMON in
     namenode)
       JPS_CLASS=NameNode
-      ${HADOOP_PREFIX}/bin/hdfs --daemon $1 namenode
+      $HADOOP_PREFIX/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs $1 namenode
     ;;
     datanode)
       JPS_CLASS=DataNode
-      ${HADOOP_PREFIX}/bin/hdfs --daemon $1 datanode
+      $HADOOP_PREFIX/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs $1 datanode
     ;;
     resourcemanager)
       JPS_CLASS=ResourceManager
-      ${HADOOP_PREFIX}/bin/yarn --daemon $1 resourcemanager
+      $HADOOP_PREFIX/sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR $1 resourcemanager
     ;;
     proxyserver)
       JPS_CLASS=WebAppProxyServer
-      ${HADOOP_PREFIX}/bin/yarn --daemon $1 proxyserver
+      $HADOOP_PREFIX/sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR $1 proxyserver
     ;;
     nodemanager)
       JPS_CLASS=NodeManager
-      ${HADOOP_PREFIX}/bin/yarn --daemon $1 nodemanager
+      $HADOOP_PREFIX/sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR $1 nodemanager
     ;;
     zookeeper)
       JPS_CLASS=QuorumPeerMain
-      ${ZK_PREFIX}/bin/zkServer.sh start
+      ${ZK_PREFIX}/bin/zkServer.sh $1
     ;;
     *)
       log "Unrecognized daemon $DAEMON"
