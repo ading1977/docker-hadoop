@@ -4,12 +4,6 @@ MAINTAINER Meng Ding <dingmeng@gmail.com>
 
 USER root
 
-ENV HADOOP_VERSION 3.0.0-SNAPSHOT
-ENV HADOOP_PREFIX /opt/hadoop
-ENV HADOOP_CONF_DIR ${HADOOP_PREFIX}/etc/hadoop
-ENV HADOOP_DATA_DIR /var/lib/hadoop
-ENV PATH ${HADOOP_PREFIX}/bin:$PATH
-
 # Install all dependencies
 RUN apt-get update && apt-get install -y \
     curl \
@@ -17,6 +11,12 @@ RUN apt-get update && apt-get install -y \
     rsync \
     ssh \
     wget
+
+ENV HADOOP_PREFIX /opt/hadoop
+ENV HADOOP_CONF_DIR ${HADOOP_PREFIX}/etc/hadoop
+ENV HADOOP_DATA_DIR /var/lib/hadoop
+ENV PATH ${HADOOP_PREFIX}/bin:$PATH
+ENV HADOOP_VERSION 3.0.0-SNAPSHOT
 
 # Download hadoop
 RUN curl -SL https://s3.amazonaws.com/hadoop-distribution/hadoop-${HADOOP_VERSION}.tar.gz \
@@ -37,7 +37,7 @@ RUN tar cf /tmp/hadoop-data.tar -C ${HADOOP_DATA_DIR} . \
 
 ENV ZK_PREFIX /opt/zookeeper
 ENV ZK_CONF_DIR $ZK_PREFIX/conf
-ENV ZK_VERSION 3.4.6
+ENV ZK_VERSION 3.4.7
 ENV PATH ${ZK_PREFIX}/bin:$PATH
 
 # Download zookeeper
