@@ -4,7 +4,7 @@ MAINTAINER Meng Ding <dingmeng@gmail.com>
 
 USER root
 
-ENV HADOOP_VERSION 3.0.0-SNAPSHOT
+ENV HADOOP_VERSION 2.8.0-SNAPSHOT
 ENV HADOOP_PREFIX /opt/hadoop
 ENV HADOOP_CONF_DIR ${HADOOP_PREFIX}/etc/hadoop
 ENV HADOOP_DATA_DIR /var/lib/hadoop
@@ -58,9 +58,9 @@ RUN curl -SL https://s3.amazonaws.com/hadoop-distribution/slider-${SLIDER_VERSIO
     | tar xz -C /opt
 # Install slider
 RUN ln -s /opt/slider-${SLIDER_VERSION} ${SLIDER_PREFIX} \
-    && mkdir -p ${SLIDER_PREFIX}/app_packages
+    && mkdir -p /opt/app_packages
 # Copy the sample application packages
-COPY add/config/slider/app_packages ${SLIDER_PREFIX}/app_packages/
+COPY add/config/slider/app_packages /opt/app_packages/
 
 # Set JAVA_HOME
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
