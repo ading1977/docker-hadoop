@@ -37,6 +37,12 @@ init_hadoop_config() {
   rm -f /tmp/hadoop-config.tar
 }
 
+init_docker() {
+  if [ -n $DOCKER_BIN_DIR ]; then
+    ln -s $DOCKER_BIN_DIR/docker /usr/bin/docker
+  fi
+}
+
 die() {
   log "Stopping $DAEMON ..."
   if do_action "stop"; then
@@ -88,6 +94,8 @@ init() {
   init_data
   # Initialize configuration files if needed
   init_hadoop_config
+  # Initialize docker
+  init_docker
 }
 
 
