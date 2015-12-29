@@ -38,8 +38,14 @@ init_hadoop_config() {
 }
 
 init_docker() {
+  if [ $CONF_ENABLE_DOCKER_IN_DOCKER != true ]; then
+    return 0
+  fi
   if [ -n $DOCKER_BIN_DIR ]; then
-    ln -s $DOCKER_BIN_DIR/docker /usr/bin/docker
+    if [ -e "/usr/bin/docker" ]; then
+      rm -f /usr/bin/docker
+      ln -s $DOCKER_BIN_DIR/docker /usr/bin/docker
+    fi
   fi
 }
 
