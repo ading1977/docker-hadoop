@@ -37,11 +37,11 @@ RUN tar cf /tmp/hadoop-data.tar -C ${HADOOP_DATA_DIR} . \
 
 ENV ZK_PREFIX /opt/zookeeper
 ENV ZK_CONF_DIR $ZK_PREFIX/conf
-ENV ZK_VERSION 3.4.7
+ENV ZK_VERSION 3.4.6
 ENV PATH ${ZK_PREFIX}/bin:$PATH
 
 # Download zookeeper
-RUN curl -SL http://apache.mirror.rafal.ca/zookeeper/stable/zookeeper-${ZK_VERSION}.tar.gz \
+RUN curl -SL http://apache.mirror.rafal.ca/zookeeper/zookeeper-${ZK_VERSION}/zookeeper-${ZK_VERSION}.tar.gz \
     | tar xz -C /opt
 
 # Install zookeeper
