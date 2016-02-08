@@ -65,6 +65,9 @@ COPY add/config/slider/app_packages /opt/app_packages/
 # Set JAVA_HOME
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
 
+# Create user
+RUN groupadd -r vagrant -g 1000 && useradd -r -g vagrant -u 1000 vagrant
+
 # Run
 COPY bootstrap.sh /
 ENTRYPOINT ["/bootstrap.sh"]
